@@ -62,7 +62,7 @@ def call_pagination(pages, films_count):
             break
 
 
-def menu_1(db, mongo):
+def search_by_title_menu(db, mongo):
     """
     Handles the menu option for searching films by title keyword.
 
@@ -100,7 +100,7 @@ def menu_1(db, mongo):
         call_pagination(pages, films_count)
 
 
-def menu_2(db, mongo):
+def search_by_genre_menu(db, mongo):
     """
     Handles the menu option for searching films by genre and year range.
 
@@ -173,7 +173,7 @@ def menu_2(db, mongo):
             continue
 
 
-def menu_3(db, mongo):
+def search_by_rating_menu(db, mongo):
     """
     Handles the menu option for searching films by rating and year range.
 
@@ -248,7 +248,7 @@ def menu_3(db, mongo):
             continue
 
 
-def menu_4(db, mongo):
+def statistics_menu(db, mongo):
     """
     Handles the statistics menu.
 

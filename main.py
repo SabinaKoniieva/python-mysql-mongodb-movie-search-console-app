@@ -4,7 +4,7 @@ import formatter as fter
 from config import dbconfig, mongoconfig
 from MySQL import DB
 from MongoDB import MongoDB
-from menu_logic import menu_1, menu_2, menu_3, menu_4
+from menu_logic import search_by_title_menu, search_by_genre_menu, search_by_rating_menu, statistics_menu
 
 
 def main():
@@ -30,13 +30,13 @@ def main():
             continue
 
         if user_choice == 1:
-            menu_1(db, mongo)
+            search_by_title_menu(db, mongo)
         elif user_choice == 2:
-            menu_2(db, mongo)
+            search_by_genre_menu(db, mongo)
         elif user_choice == 3:
-            menu_3(db, mongo)
+            search_by_rating_menu(db, mongo)
         elif user_choice == 4:
-            menu_4(db, mongo)
+            statistics_menu(db, mongo)
         elif user_choice == 0:
             print(f"\nРабота приложения завершена!")
             print(f"Спасибо за использование!")
