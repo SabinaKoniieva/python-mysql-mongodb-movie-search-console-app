@@ -8,6 +8,18 @@ from menu_logic import search_by_title_menu, search_by_genre_menu, search_by_rat
 
 
 def main():
+    try:
+        db = DB(dbconfig)
+    except pymysql.err.OperationalError:
+        print("Ошибка подключения к MySQL")
+        return
+
+    try:
+        mongo = MongoDB(mongoconfig)
+    except pymongo.errors.ServerSelectionTimeoutError:
+        print("Ошибка подключения к MongoDB")
+        return
+        
     while True:
         fter.print_main_menu()
 
@@ -15,18 +27,6 @@ def main():
             user_choice = int(input(f"\nВыберите пункт меню: "))
         except ValueError:
             print(f"\nВведите именно цифру меню (1, 2, 3, 4 или 0)")
-            continue
-
-        try:
-            db = DB(dbconfig)
-        except pymysql.err.OperationalError:
-            print("Ошибка подключения к MySQL")
-            continue
-
-        try:
-            mongo = MongoDB(mongoconfig)
-        except pymongo.errors.ServerSelectionTimeoutError:
-            print("Ошибка подключения к MongoDB")
             continue
 
         if user_choice == 1:
@@ -43,6 +43,9 @@ def main():
             break
         else:
             print(f"\nВведите корректное число (1, 2, 3, 4 или 0)")
+    
+    db.close()
+    mongo.close()
 
 
 main()

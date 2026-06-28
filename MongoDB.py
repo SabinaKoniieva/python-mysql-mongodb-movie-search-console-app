@@ -114,5 +114,6 @@ class MongoDB:
         ]
         return list(self.coll.aggregate(pipeline))
 
-    def __del__(self):
-        self.client.close()
+    def close(self):
+        if self.client:
+            self.client.close()

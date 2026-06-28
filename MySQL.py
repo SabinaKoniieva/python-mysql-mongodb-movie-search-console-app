@@ -8,9 +8,11 @@ class DB:
     def search_cnt_by_title(self, film_title):
         with self.connection.cursor() as cursor:
             query_cnt = """
-                SELECT COUNT(*) as films_count
-                FROM film
-                WHERE title LIKE %s
+                SELECT COUNT(DISTINCT f.film_id) as films_count
+                FROM film AS f
+                JOIN film_category AS fc ON f.film_id = fc.film_id
+                JOIN category AS c ON fc.category_id = c.category_id
+                WHERE f.title LIKE %s
             """
             cursor.execute(query_cnt, (f"%{film_title}%",))
             return cursor.fetchone()[0]
@@ -18,7 +20,7 @@ class DB:
     def search_cnt_by_genre(self, genre_id):
         with self.connection.cursor() as cursor:
             query_cnt = """
-                SELECT COUNT(*)
+                SELECT COUNT(DISTINCT f.film_id)
                 FROM film AS f
                 JOIN film_category AS fc ON f.film_id = fc.film_id
                 JOIN category AS c ON fc.category_id = c.category_id
@@ -40,7 +42,7 @@ class DB:
     def search_cnt_by_genre_year(self, genre_id, start, end):
         with self.connection.cursor() as cursor:
             query_cnt = """
-                SELECT count(*) 
+                SELECT COUNT(DISTINCT f.film_id) 
                 FROM film AS f
                 JOIN film_category AS fc ON f.film_id = fc.film_id
                 JOIN category AS c ON c.category_id = fc.category_id
@@ -52,9 +54,11 @@ class DB:
     def search_cnt_by_rating_year(self, rating, start, end):
         with self.connection.cursor() as cursor:
             query_cnt = """
-                SELECT count(*) 
-                FROM film
-                WHERE rating = %s AND release_year BETWEEN %s AND %s
+                SELECT COUNT(DISTINCT f.film_id) 
+                FROM film AS f
+                JOIN film_category AS fc ON f.film_id = fc.film_id
+                JOIN category AS c ON c.category_id = fc.category_id
+                WHERE f.rating = %s AND f.release_year BETWEEN %s AND %s
             """
             cursor.execute(query_cnt, (rating, start, end))
             return cursor.fetchone()[0]
@@ -139,11 +143,16 @@ class DB:
             return
 
         query_list = """
-            SELECT f.title, f.release_year as year, c.name AS genre, f.rating
+            SELECT 
+                f.title, 
+                f.release_year as year, 
+                GROUP_CONCAT(c.name ORDER BY c.name SEPARATOR ', ') AS genre, 
+                f.rating
             FROM film AS f
             JOIN film_category AS fc ON f.film_id = fc.film_id
             JOIN category AS c ON fc.category_id = c.category_id
             WHERE f.title LIKE %s
+            GROUP BY f.film_id, f.title, f.release_year, f.rating
             LIMIT %s OFFSET %s
         """
 
@@ -172,17 +181,21 @@ class DB:
             return
 
         query = """
-            SELECT f.title, f.release_year as year, c.name AS genre
+            SELECT 
+                f.title, 
+                f.release_year as year, 
+                GROUP_CONCAT(c.name ORDER BY c.name SEPARATOR ', ') AS genre
             FROM film AS f
             JOIN film_category AS fc ON f.film_id = fc.film_id
             JOIN category AS c ON c.category_id = fc.category_id
             WHERE f.rating = %s AND f.release_year BETWEEN %s AND %s
+            GROUP BY f.film_id, f.title, f.release_year
             LIMIT %s OFFSET %s
         """
         return self.paginate(
             query=query, params=(rating, start, end), total_count=films_count
         )
-
-    def __del__(self):
-        if self.connection.open:
+    
+    def close(self):
+        if self.connection and self.connection.open:
             self.connection.close()
