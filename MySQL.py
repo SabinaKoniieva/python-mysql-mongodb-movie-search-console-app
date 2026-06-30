@@ -81,9 +81,11 @@ class DB:
         with self.connection.cursor() as cursor:
             query_cnt = """
                 SELECT 
-                    MIN(CAST(release_year AS UNSIGNED)) as min,
-                    MAX(CAST(release_year AS UNSIGNED)) as max
-                FROM film 
+                    MIN(CAST(f.release_year AS UNSIGNED)) as min,
+                    MAX(CAST(f.release_year AS UNSIGNED)) as max
+                FROM film AS f
+                JOIN film_category AS fc ON f.film_id = fc.film_id
+                JOIN category AS c ON fc.category_id = c.category_id
                 WHERE rating = %s
             """
             cursor.execute(query_cnt, (rating,))

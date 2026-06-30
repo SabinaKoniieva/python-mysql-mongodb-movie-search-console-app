@@ -1,4 +1,4 @@
-# для подключения к mysql
+# MySQL connection settings
 dbconfig = {
     "host": "****",
     "user": "****",
@@ -7,7 +7,7 @@ dbconfig = {
     "database": "****",
 }
 
-# для подключения к mongo
+# MongoDB connection settings
 mongoconfig = (
     "****"
 )

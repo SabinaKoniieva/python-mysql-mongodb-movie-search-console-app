@@ -11,22 +11,22 @@ def main():
     try:
         db = DB(dbconfig)
     except pymysql.err.OperationalError:
-        print("Ошибка подключения к MySQL")
+        print("Failed to connect to MySQL.")
         return
 
     try:
         mongo = MongoDB(mongoconfig)
     except pymongo.errors.ServerSelectionTimeoutError:
-        print("Ошибка подключения к MongoDB")
+        print("Failed to connect to MongoDB.")
         return
         
     while True:
         fter.print_main_menu()
 
         try:
-            user_choice = int(input(f"\nВыберите пункт меню: "))
+            user_choice = int(input(f"\nSelect a menu option: "))
         except ValueError:
-            print(f"\nВведите именно цифру меню (1, 2, 3, 4 или 0)")
+            print(f"\nPlease enter a number (1, 2, 3, 4, or 0)")
             continue
 
         if user_choice == 1:
@@ -38,11 +38,11 @@ def main():
         elif user_choice == 4:
             statistics_menu(db, mongo)
         elif user_choice == 0:
-            print(f"\nРабота приложения завершена!")
-            print(f"Спасибо за использование!")
+            print(f"\nApplication closed.")
+            print(f"Thank you for using the application!")
             break
         else:
-            print(f"\nВведите корректное число (1, 2, 3, 4 или 0)")
+            print(f"\nPlease enter a valid menu option (1, 2, 3, 4, or 0)")
     
     db.close()
     mongo.close()

@@ -4,39 +4,39 @@ from config import MAX_WIDTH_FTER
 
 def print_main_menu():
     menu = [
-        ["1", "Поиск фильма по названию"],
-        ["2", "Поиск фильма по жанру и году"],
-        ["3", "Поиск фильма по рейтингу и году"],
-        ["4", "Статистика запросов"],
-        ["0", "Выход"],
+        ["1", "Search movies by title"],
+        ["2", "Search movies by genre and year"],
+        ["3", "Search movies by rating and year"],
+        ["4", "Search statistics"],
+        ["0", "Exit"],
     ]
-    print(tabulate(menu, headers=["", "Меню"], tablefmt="fancy_grid"))
+    print(tabulate(menu, headers=["", "Main Menu"], tablefmt="fancy_grid"))
 
 
 def print_menu_statistics():
     menu = [
-        ["1", "Топ 5 популярных запросов по названию"],
-        ["2", "Топ 5 популярных запросов по жанру и году"],
-        ["3", "Топ 5 популярных запросов по рейтингу и году"],
-        ["4", "Последние 5 поисковых запросов"],
-        ["0", "Выход"],
+        ["1", "Top 5 title search requests"],
+        ["2", "Top 5 genre and year search requests"],
+        ["3", "Top 5 rating and year search requests"],
+        ["4", "Last 5 search requests"],
+        ["0", "Exit"],
     ]
     print()
-    print(tabulate(menu, headers=["", "Статистика запросов"], tablefmt="fancy_grid"))
+    print(tabulate(menu, headers=["", "Search Statistics"], tablefmt="fancy_grid"))
 
 
 def print_cnt(films_count, search_description):
     if films_count == 0:
-        print(f"\nПо запросу '{search_description}' фильмы не найдены")
+        print(f"\nNo movies found for {search_description}")
     else:
         print(
-            f"\nПо запросу '{search_description}' найдено {films_count} фильм(а/ов)\n"
+            f"\nFound {films_count} movie(s) for {search_description}\n"
         )
 
 
 def print_table_films(offset, films, headers):
     headers =[header.capitalize() for header in headers]
-    print(f"{f'Фильмы {offset + 1} - {offset + len(films)}:':^{MAX_WIDTH_FTER}}\n")
+    print(f"{f'Movies {offset + 1} - {offset + len(films)}:':^{MAX_WIDTH_FTER}}\n")
     print(tabulate(films, headers=headers, tablefmt="fancy_grid"))
 
 
@@ -49,7 +49,7 @@ def print_top_searches(data, search_type):
     """
     
     if not data:
-        print("\nСтатистика пока пустая")
+        print("\nNo statistics available yet")
         return
 
     table = []
@@ -116,7 +116,7 @@ def print_last_searches(data):
     """
     
     if not data:
-        print("\nСтатистика пока пустая")
+        print("\nNo statistics available yet")
         return
 
     table = []
@@ -136,7 +136,7 @@ def print_last_searches(data):
 
 
 def print_all_genres(genres):
-    print(f"\n{'Жанры фильмов:':^{MAX_WIDTH_FTER}}")
+    print(f"\n{'Movie Genres:':^{MAX_WIDTH_FTER}}")
     headers = ["Id", "Genre"]
     print(tabulate(genres, headers=headers, tablefmt="fancy_grid"))
 
@@ -145,5 +145,5 @@ def print_all_ratings(ratings):
     table = [(i, r[0], r[1]) for i, r in enumerate(ratings, start=1)]
     headers = ["Id", "Rating", "Description"]
 
-    print(f"\n{'Рейтинги фильмов:':^{MAX_WIDTH_FTER}}")
+    print(f"\n{'Movie Ratings:':^{MAX_WIDTH_FTER}}")
     print(tabulate(table, headers=headers, tablefmt="fancy_grid"))

@@ -40,13 +40,13 @@ def call_pagination(pages, films_count):
     """
     for page in pages:
         fter.print_table_films(page["count"], page["films"], page["headers"])
-        # все что ниже завернуть в отдлел фцию с параметором page и films_count
+
         if page["count"] + len(page["films"]) >= films_count:
-            print("Это были все найденные фильмы по Вашему запросу")
+            print("These are all the movies matching your search.")
             break
 
         while True:
-            answer = input("\nПоказать следующие 10 фильмов? y/n : ")
+            answer = input("\nShow the next 10 movies? y/n : ")
 
             if answer.strip().lower() == "n":
                 show_next = False
@@ -55,7 +55,7 @@ def call_pagination(pages, films_count):
                 show_next = True
                 break
             else:
-                print(f"\nВведите только y или n")
+                print(f"\nPlease enter 'y' or 'n'.")
 
         if not show_next:
             print()
@@ -74,7 +74,7 @@ def search_by_title_menu(db, mongo):
     
     while True:
         film_title = input(
-            f"\nВведите название/начало названия фильма или 0 для выхода: "
+            f"\nPlease enter a movie title (or part of a title), or 0 to exit: "
         ).strip()
 
         if film_title == "0":
@@ -84,7 +84,7 @@ def search_by_title_menu(db, mongo):
             continue
         
         films_count = db.search_cnt_by_title(film_title)
-        fter.print_cnt(films_count, film_title)
+        fter.print_cnt(films_count, f"'{film_title}'")
 
         if films_count == 0:
             continue
@@ -116,9 +116,9 @@ def search_by_genre_menu(db, mongo):
         fter.print_all_genres(all_genres)
 
         try:
-            genre_id = int(input(f"\nВведите id жанра из списка или 0 для выхода: "))
+            genre_id = int(input(f"\nPlease enter a genre ID from the list, or 0 to exit: "))
         except ValueError:
-            print("Такого id жанра нет")
+            print("Please enter a valid genre ID.")
             continue
 
         if genre_id == 0:
@@ -128,12 +128,13 @@ def search_by_genre_menu(db, mongo):
             min_year, max_year = db.min_max_years_g(genre_id)
 
             print(
-                f"\nПо жанру {genres_dict[genre_id]} диапазон годов от {min_year} до {max_year}"
+                f"\nAvailable release years for the '{genres_dict[genre_id]}' genre: "
+                f"{min_year}–{max_year}"
             )
 
             while True:
                 user_year = input(
-                    "Введите год (хххх), диапазон через тире (хххх-хххх) либо 0 для выбора др жанра: "
+                    "Please enter a year (YYYY), a year range (YYYY-YYYY), or 0 to select another genre: "
                 ).strip()
 
                 if user_year == "0":
@@ -143,13 +144,13 @@ def search_by_genre_menu(db, mongo):
                     start, end = convert_input_year(user_year, min_year, max_year)
                 except ValueError:
                     print(
-                        f"\nВведите корректный год или диапазон годов (хххх или хххх-хххх)\n"
+                        f"\nPlease enter a valid year or year range (YYYY or YYYY-YYYY).\n"
                     )
                     continue
 
                 films_count = db.search_cnt_by_genre_year(genre_id, start, end)
 
-                search_description = f"жанр {genres_dict[genre_id]} за {user_year} гг."
+                search_description = f"genre '{genres_dict[genre_id]}' for {user_year}"
                 fter.print_cnt(films_count, search_description)
 
                 if films_count == 0:
@@ -169,7 +170,7 @@ def search_by_genre_menu(db, mongo):
                 pages = db.search_by_genre_year(genre_id, films_count, start, end)
                 call_pagination(pages, films_count)
         else:
-            print("Такого id жанра нет")
+            print("Please enter a valid genre ID.")
             continue
 
 
@@ -190,10 +191,10 @@ def search_by_rating_menu(db, mongo):
 
         try:
             rating_id = int(
-                input(f"\nВведите id рейтинга из списка или 0 для выхода: ")
+                input(f"\nPlease enter a rating ID from the list, or 0 to exit: ")
             )
         except ValueError:
-            print("Такого id рейтинга нет")
+            print("Please enter a valid rating ID.")
             continue
 
         if rating_id == 0:
@@ -204,12 +205,13 @@ def search_by_rating_menu(db, mongo):
             films_count = db.search_cnt_by_rating(user_rating)
             min_year, max_year = db.min_max_years_r(user_rating)
             print(
-                f"\nПо рейтингу {user_rating} диапазон годов от {min_year} до {max_year}"
+                f"\nAvailable release years for the '{user_rating}' rating: "
+                f"{min_year}–{max_year}"
             )
 
             while True:
                 user_year = input(
-                    "Введите год (хххх), диапазон через тире (хххх-хххх) либо 0 для выбора др рейтинга: "
+                    "Please enter a year (YYYY), a year range (YYYY-YYYY), or 0 to select another rating: "
                 ).strip()
 
                 if user_year == "0":
@@ -219,12 +221,12 @@ def search_by_rating_menu(db, mongo):
                     start, end = convert_input_year(user_year, min_year, max_year)
                 except ValueError:
                     print(
-                        f"\nВведите корректный год или диапазон годов (хххх или хххх-хххх)\n"
+                        f"\nPlease enter a valid year or year range (YYYY or YYYY-YYYY).\n"
                     )
                     continue
 
                 films_count = db.search_cnt_by_rating_year(user_rating, start, end)
-                search_description = f"рейтинг {user_rating} за {user_year} гг."
+                search_description = f"rating '{user_rating}' for {user_year}"
                 fter.print_cnt(films_count, search_description)
 
                 if films_count == 0:
@@ -244,7 +246,7 @@ def search_by_rating_menu(db, mongo):
                 pages = db.search_by_rating_year(user_rating, films_count, start, end)
                 call_pagination(pages, films_count)
         else:
-            print("Такого id рейтинга нет")
+            print("Please enter a valid rating ID.")
             continue
 
 
@@ -263,9 +265,9 @@ def statistics_menu(db, mongo):
         fter.print_menu_statistics()
 
         try:
-            stat_choice = int(input("\nВыберите пункт меню статистики: "))
+            stat_choice = int(input("\nPlease select a statistics menu option: "))
         except ValueError:
-            print(f"\nВведите число из меню (1, 2, 3, 4 или 0)")
+            print(f"\nPlease enter a valid menu option (1, 2, 3, 4, or 0).")
             continue
 
         if stat_choice == 1:
@@ -286,4 +288,4 @@ def statistics_menu(db, mongo):
         elif stat_choice == 0:
             break
         else:
-            print(f"\nВведите корректный пункт меню (1, 2, 3, 4 или 0)")
+            print(f"\nPlease enter a valid menu option (1, 2, 3, 4, or 0).")
